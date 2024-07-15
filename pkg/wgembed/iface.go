@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 /* SPDX-License-Identifier: MIT
@@ -13,6 +14,7 @@ import (
 	"net"
 
 	"github.com/pkg/errors"
+	"golang.zx2c4.com/wireguard/conn"
 	"golang.zx2c4.com/wireguard/device"
 	"golang.zx2c4.com/wireguard/ipc"
 	"golang.zx2c4.com/wireguard/tun"
@@ -63,7 +65,7 @@ func New(interfaceName string) (WireGuardInterface, error) {
 		return nil, errors.Wrap(err, "UAPI listen error")
 	}
 
-	wg.device = device.NewDevice(tun, device.NewLogger(device.LogLevelError, wg.name))
+	wg.device = device.NewDevice(tun, conn.NewDefaultBind(), device.NewLogger(device.LogLevelError, wg.name))
 
 	errs := make(chan error)
 
